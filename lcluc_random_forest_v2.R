@@ -26,7 +26,6 @@ library(caret)
 
 
 
-
 # Load HLS raster 
 
 HLS <- stack("HLS_clip.tif")
@@ -48,7 +47,6 @@ rf_stack_pixels <- getValues(rf_stack)
 head(rf_stack_pixels)
 
 # Load and merge label data 
-
 agriculture <- st_read("labels_shp/agriculture_HLS.shp")
 bare <- st_read("labels_shp/bare_HLS.shp")
 built <- st_read("labels_shp/built_HLS.shp")
@@ -94,6 +92,7 @@ extracted_values <- raster::extract(rf_stack, all_labels)
 # Combine extracted data and label data 
 all_LU_geom <- cbind(all_labels, extracted_values)
 
+head(all_LU_geom)
 
 
 #Drop geometry column 
@@ -151,8 +150,6 @@ train_forest <- subset(forest_LU, forest_LU$random <0.70)
 train_forest_water_bare <- subset(forest_water_bare_LU, forest_water_bare_LU$random <0.70)
 train_all_LU <- subset(all_LU, all_LU$random <0.70)
 
-
-
 # Subset 30% into the test dataset
 test_forest <- subset(forest_LU, forest_LU$random >0.70)
 test_forest_water_bare<- subset(forest_water_bare_LU, forest_water_bare_LU$random >0.70)
@@ -163,12 +160,10 @@ train_forest <- train_forest %>% dplyr::select(-random)
 train_forest_water_bare <- train_forest_water_bare %>% dplyr::select(-random)
 train_all_LU <- train_all_LU %>% dplyr::select(-random)
 
-
 # convert land use type column to factor  
 train_forest$forest <- as.factor(train_forest$forest)
 train_forest_water_bare$forest_water_bare <- as.factor(train_forest_water_bare$forest_water_bare)
 train_all_LU$class <- as.factor(train_all_LU$class)
-
 
 test_forest$forest <- as.factor(test_forest$forest)
 test_forest_water_bare$forest_water_bare <- as.factor(test_forest_water_bare$forest_water_bare)
@@ -281,9 +276,6 @@ forest_accuracy_data <- as.data.frame(forest_accuracy)
 
 actual <- forest_accuracy_data %>% gather(forest_accuracy_data, forest:users)
 
-hm <- hm %>% gather(x, value, a:j)
-
-
 forest_heatmap <- ggplot()+
   geom_heat()
 
@@ -377,8 +369,6 @@ users_accuracy_round <- round(users_accuracy, 3)
 all_LU_accuracy <- cbind(all_LU_accuracy, "users" = users_accuracy_round)
 
 all_LU_accuracy
-
-
 
 
 
